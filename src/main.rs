@@ -17,8 +17,9 @@ struct CrabSize(f32);
 
 fn main() {
     let mut app = App::new();
+    app.add_plugins(DefaultPlugins);
     app.add_systems(Startup, crab_init);
-    app.add_systems(Update, (gimme_crab, gimme_named_crabs, gimme_nameless_crab, gimme_special_crabs).chain());
+    app.add_systems(Update, (change_all_crab_names, gimme_crab, gimme_named_crabs, gimme_nameless_crab, gimme_special_crabs).chain());
     app.run();
 }
 
@@ -57,6 +58,8 @@ fn crab_init(mut commands: Commands) {
     ));
 }
 
+
+//single component query
 fn gimme_crab(query: Query<&Crab>) {
     println!("Crabs:");
     for crab in query.iter() {
@@ -66,6 +69,7 @@ fn gimme_crab(query: Query<&Crab>) {
     }
 }
 
+//multiple component query
 fn gimme_named_crabs(query: Query<(&Crab, &CrabName)>) {
     println!("Crabs with names:");
     for (crab, name) in query.iter() {
@@ -76,6 +80,7 @@ fn gimme_named_crabs(query: Query<(&Crab, &CrabName)>) {
     }
 }
 
+//without component query
 fn gimme_nameless_crab(query: Query<&Crab, Without<CrabName>>) {
     println!("Nameless crabs:");
     for crab in query.iter() {
@@ -85,6 +90,7 @@ fn gimme_nameless_crab(query: Query<&Crab, Without<CrabName>>) {
     }
 }
 
+//multiple component query with multiple component filters
 fn gimme_special_crabs(query: Query<(&Crab, &CrabName), (With<CrabSize>, With<CrabColor>)>) {
     println!("Special crabs:");
     for (crab, name) in query.iter() {
@@ -92,5 +98,12 @@ fn gimme_special_crabs(query: Query<(&Crab, &CrabName), (With<CrabSize>, With<Cr
         println!("Crab speed: {}", crab.speed);
         println!("Crab legs: {}", crab.legs);
         println!("");
+    }
+}
+
+//mutable query
+fn change_all_crab_names(mut query: Query<&mut CrabName>) {
+    for mut name in query.iter_mut() {
+        name.0 = "Michael".to_string();
     }
 }
