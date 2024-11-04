@@ -55,14 +55,6 @@ pub fn spawn_scene (
             ..default()
         },
     ));
-
-    commands.spawn(
-        PbrBundle {
-            mesh: meshes.add(Cuboid::new(1.0, 1.0, 1.0)),
-            transform: Transform::from_xyz(0., 0., -5.),
-            ..default()
-        }
-    );
 }
 
 static BANANA_SPEED: f32 = 150.0;
