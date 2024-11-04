@@ -2,6 +2,8 @@ use bevy::{animation::transition, prelude::*, render::camera};
 use bevy::core_pipeline::motion_blur::*;
 use bevy::core_pipeline::bloom::*;
 use bevy::core_pipeline::tonemapping::Tonemapping;
+use bevy_framepace::*;
+
 
 pub struct BananaPlugin;
 
@@ -23,6 +25,7 @@ pub fn spawn_scene (
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     asset_server: ResMut<AssetServer>,
+    mut frame_settings: ResMut<FramepaceSettings>,
 ) {
     commands.spawn((
         Camera2dBundle {
@@ -34,8 +37,9 @@ pub fn spawn_scene (
             ..default()
         },
         MotionBlur {
-            shutter_angle: 500.0,
-            samples: 3,
+            shutter_angle: 2.0,
+            samples: 2,
+            ..default()
         },
         BloomSettings::default(),
     ));
@@ -55,6 +59,8 @@ pub fn spawn_scene (
             ..default()
         },
     ));
+
+    frame_settings.limiter = Limiter::from_framerate(60.);
 }
 
 static BANANA_SPEED: f32 = 150.0;
@@ -93,7 +99,7 @@ pub fn move_banana (
         banana_transform.translation.y += banana_struct.velocity.y * time.delta_seconds() * BANANA_SPEED;
 
         if distance > 100. {
-            sprite.flip_x = banana_struct.velocity.x < 0.;
+            sprite.flip_x = banana_transform.translation.x > destination.x;
         }
     }
 }
